@@ -9,9 +9,9 @@ export default function CredBody(props) {
 	return (
 		<Modal.Body>
 			<CredForm type={props.type}>
-				<Form.Group className="mb-3" controlId="formBasicUsername">
+				<Form.Group className="mb-3">
 					<Form.Label>username:</Form.Label>
-					<Form.Control type="email" placeholder="username" />
+					<Form.Control type="text" placeholder="username" maxLength="20" />
 					<Form.Text style={{ display: errorMsgDisplay }}>{errorMsg}</Form.Text>
 				</Form.Group>
 

@@ -1,3 +1,15 @@
 form .btn-secondary {
     margin-left: 2%;
 }
+
+#messages {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-color: red;
+}
+
+.sticky-nav {
+    position: sicky !important;
+    top: 0 !important;
+}

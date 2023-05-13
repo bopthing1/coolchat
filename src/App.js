@@ -4,11 +4,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import CCNavbar from "./components/CCNavbar";
 import { Component } from "react";
+import MessagesContainer from "./components/MessagesContainer";
 
 function App() {
 	return (
 		<div className="App">
 			<CCNavbar></CCNavbar>
+			<MessagesContainer></MessagesContainer>
 		</div>
 	);
 }

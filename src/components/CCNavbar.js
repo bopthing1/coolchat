@@ -2,11 +2,11 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
 import NavbarEndStuff from "./NavbarEndStuff";
-import { Component, useState } from "react";
+// import { Component, useState } from "react";
 
 function CCNavbar(props) {
 	return (
-		<Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+		<Navbar expand="lg" bg="dark" variant="dark" className="stick-nav">
 			<Container>
 				<Navbar.Brand>coolChat😎</Navbar.Brand>
 				<Navbar.Toggle aria-controls="responsive-navbar-nav" />
