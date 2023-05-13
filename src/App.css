@@ -2,14 +2,49 @@ form .btn-secondary {
     margin-left: 2%;
 }
 
+body {
+    background-color: #343a40 !important;
+}
+
 #messages {
     width: 100%;
     height: 100%;
     position: absolute;
-    background-color: red;
+    /* background-color: red; */
 }
 
-.sticky-nav {
-    position: sicky !important;
-    top: 0 !important;
+
+.message {
+    width: 100% !important;
+    border: thin solid black;
+    background-color: #343a40 !important;
+    border-radius: 0px !important;
+    display: block !important;
 }
+
+p {
+    color: white;
+}
+
+.date {
+    color: grey;
+    font-weight: normal;
+    text-align: right;
+    margin-left: 60%;
+}
+
+.content, .author {
+    padding-bottom: 0.2rem;
+    padding-top: 0.2rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+}
+
+.author {
+    font-weight: bold;
+}
+
+
+
+
+

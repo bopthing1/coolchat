@@ -6,7 +6,7 @@ import NavbarEndStuff from "./NavbarEndStuff";
 
 function CCNavbar(props) {
 	return (
-		<Navbar expand="lg" bg="dark" variant="dark" className="stick-nav">
+		<Navbar expand="lg" bg="dark" variant="dark" sticky="top" className="h-100">
 			<Container>
 				<Navbar.Brand>coolChat😎</Navbar.Brand>
 				<Navbar.Toggle aria-controls="responsive-navbar-nav" />

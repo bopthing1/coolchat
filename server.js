@@ -20,9 +20,11 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
 	console.log("new connection!");
 
-	setInterval(() => {
-		socket.emit("updateMessages", ["TUNER", "BUNER", "RADIO"]);
-	}, 10000);
+	socket.emit("updateMessages", [
+		"yo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant capyo bro the new discord update is sick ass. like my guy you cant cap",
+		"BUNER",
+		"RADIO",
+	]);
 });
 
 server.listen(PORT, () => console.log("listening on port " + PORT));

@@ -8,7 +8,7 @@ import MessagesContainer from "./components/MessagesContainer";
 
 function App() {
 	return (
-		<div className="App">
+		<div className="App bg-dark">
 			<CCNavbar></CCNavbar>
 			<MessagesContainer></MessagesContainer>
 		</div>
