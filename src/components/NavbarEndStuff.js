@@ -1,33 +1,27 @@
 import Nav from "react-bootstrap/Nav";
 // import Navbar from "react-bootstrap/Navbar";
 import { Person } from "react-bootstrap-icons";
-import BasicModal from "./BasicModal";
+import { Modal } from "react-bootstrap";
 import { Component, useEffect, useState } from "react";
+
+import SignupModal from "./SignupModal";
 
 function NavbarEndStuff(props) {
 	let [signupOpen, setSignupOpen] = useState(false);
 	let [loginOpen, setLoginOpen] = useState(false);
 
-	function doit() {}
-
-	useEffect(() => {
-		setSignupOpen(!signupOpen);
-	}, []);
-
 	return (
 		<>
-			<BasicModal
-				title="signup"
-				text="signup"
+			<SignupModal
 				visible={signupOpen}
-				onCloseClicked={setSignupOpen(false)} // fuck here be dragons
-			></BasicModal>
+				onCloseClicked={() => setSignupOpen(!signupOpen)}
+			></SignupModal>
 
 			<Nav>
 				<Person />
-				<Nav.Link onClick={doit}>signup</Nav.Link>
+				<Nav.Link onClick={() => setSignupOpen(!signupOpen)}>signup</Nav.Link>
 				<Person />
-				<Nav.Link onClick={setSignupOpen(!signupOpen)}>login</Nav.Link>
+				<Nav.Link onClick={() => setLoginOpen(!loginOpen)}>login</Nav.Link>
 			</Nav>
 		</>
 	);
