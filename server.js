@@ -1,21 +1,27 @@
+const cors = require("cors");
 const express = require("express");
 const http = require("http");
-const socketIo = require("socket.io");
+const {Server} = require("socket.io");
 
 const PORT = 9000;
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server, {
+
+app.use(cors())
+
+const io = new Server(server, {
     cors: {
-      origin: "https://example.com",
-      methods: ["GET", "POST"]
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"]
     }
-  });
+});
+
+;
 
 io.on("connection", socket => {
     console.log("new connection!");
 })
 
-app.listen(PORT, () => console.log("listening on port " + PORT));
+server.listen(PORT, () => console.log("listening on port " + PORT));
 
