@@ -9,9 +9,9 @@ export default function SignupModal(props) {
 
 	return (
 		<Modal show={props.visible}>
-			<ModalHeader title="signup"></ModalHeader>
+			<ModalHeader titleStr={props.type}></ModalHeader>
 			<CredBody
-				type="signup"
+				type={props.type}
 				onCloseClicked={() => props.onCloseClicked()}
 			></CredBody>
 		</Modal>

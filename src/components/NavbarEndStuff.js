@@ -4,7 +4,7 @@ import { Person } from "react-bootstrap-icons";
 import { Modal } from "react-bootstrap";
 import { Component, useEffect, useState } from "react";
 
-import SignupModal from "./SignupModal";
+import CredModal from "./CredModal";
 
 function NavbarEndStuff(props) {
 	let [signupOpen, setSignupOpen] = useState(false);
@@ -12,10 +12,17 @@ function NavbarEndStuff(props) {
 
 	return (
 		<>
-			<SignupModal
+			<CredModal
 				visible={signupOpen}
 				onCloseClicked={() => setSignupOpen(!signupOpen)}
-			></SignupModal>
+				type="signup"
+			></CredModal>
+
+			<CredModal
+				visible={loginOpen}
+				onCloseClicked={() => setLoginOpen(!loginOpen)}
+				type="login"
+			></CredModal>
 
 			<Nav>
 				<Person />

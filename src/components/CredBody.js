@@ -8,7 +8,7 @@ export default function CredBody(props) {
 
 	return (
 		<Modal.Body>
-			<CredForm type={props.type}>
+			<CredForm type={props.type} onCloseClicked={() => props.onCloseClicked()}>
 				<Form.Group className="mb-3">
 					<Form.Label>username:</Form.Label>
 					<Form.Control type="text" placeholder="username" maxLength="20" />
