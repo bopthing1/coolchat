@@ -1,6 +1,7 @@
 import { Button } from "react-bootstrap";
 import CreateChannelModal from "./CreateChannelModal";
 import { useState } from "react";
+import infoModule from "../appInfo";
 
 export default function NewChannelButton(props) {
 	console.log(props);
@@ -22,16 +23,18 @@ export default function NewChannelButton(props) {
 				onCloseClicked={() => setCreateChannelModalVisible(false)}
 			/>
 
-			<Button variant="success" className="channel-button">
-				join channel
-			</Button>
-			<Button
-				variant="primary"
-				className="channel-button"
-				onClick={() => createChannel()}
-			>
-				create channel
-			</Button>
+			<div style={{ display: infoModule.isLoggedIn() ? "inline" : "none" }}>
+				<Button variant="success" className="channel-button">
+					join channel
+				</Button>
+				<Button
+					variant="primary"
+					className="channel-button"
+					onClick={() => createChannel()}
+				>
+					create channel
+				</Button>
+			</div>
 		</>
 	);
 }

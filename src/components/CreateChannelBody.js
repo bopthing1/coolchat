@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
+import socket from "../socket";
 
 export default function CredBody(props) {
 	const [statusMsg, setStatusMsg] = useState("");
@@ -11,9 +12,19 @@ export default function CredBody(props) {
 
 	const [buttonsDisabled, setButtonsDisabled] = useState(false);
 
-	function onSubmit() {
+	function onSubmit(e) {
+		e.preventDefault();
+
 		const title = titleValue;
 		const description = descriptionValue;
+
+		if (localStorage.getItem("accountId")) {
+			socket.emit("newChannel", {
+				title: title,
+				description: description,
+				accountId: localStorage.getItem("accountId"),
+			});
+		}
 	}
 
 	return (

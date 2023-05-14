@@ -1,6 +1,7 @@
 import ChannelCard from "./ChannelCard";
 import socket from "../socket";
 import { useState } from "react";
+import infoModule from "../appInfo";
 
 export default function ChannelCardContainer(props) {
 	let [channels, setChannels] = useState([]);
@@ -10,7 +11,10 @@ export default function ChannelCardContainer(props) {
 	});
 
 	return (
-		<div id="channelCardContainer">
+		<div
+			id="channelCardContainer"
+			style={{ display: infoModule.isLoggedIn() ? "inline" : "none" }}
+		>
 			{/* {channels.map((channel) => {
 				const joinedChannels = socket.emit("getJoinedChannels");
 			})} */}
