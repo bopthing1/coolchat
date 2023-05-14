@@ -1,6 +1,9 @@
 import socket from "./socket";
+import init from "./accounts";
+
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 import CCNavbar from "./components/CCNavbar";
 import React, { ReactDOM } from "react";
@@ -8,35 +11,29 @@ import MessagesContainer from "./components/MessagesContainer";
 import Chatbox from "./components/Chatbox";
 import ChannelCardContainer from "./components/ChannelCardContainer";
 import ChannelCard from "./components/ChannelCard";
+import ChannelButtons from "./components/ChannelButtons";
 
 const pathName = document.location.pathname;
 
-function App() {
-	if (pathName === undefined || pathName === "/") {
+function App(props) {
+	init();
+
+	if (props.mode === "home") {
 		return (
-			<div className="App bg-dark">
-				<CCNavbar></CCNavbar>
+			<div className="App">
+				<CCNavbar />
+				<ChannelButtons></ChannelButtons>
 				<ChannelCardContainer></ChannelCardContainer>
 			</div>
 		);
-	} else if (pathName.includes("channel")) {
-		const splittedPathName = pathName.split("/");
-		const channelId = splittedPathName[2];
-		if (channelId !== undefined && channelId !== "") {
-			console.log("checking channel...");
-			socket.emit("isChannelValid", parseInt(channelId));
-			socket.on("channelValidSuccess", () => {
-				return (
-					<div className="App bg-dark">
-						<CCNavbar></CCNavbar>
-						<MessagesContainer></MessagesContainer>
-						<Chatbox></Chatbox>
-					</div>
-				);
-			});
-		} else {
-			window.location.href = "http://localhost:3000";
-		}
+	} else if (props.mode === "channel") {
+		return (
+			<div className="App" channelId={props.channelId}>
+				<CCNavbar></CCNavbar>
+				<MessagesContainer></MessagesContainer>
+				<Chatbox></Chatbox>
+			</div>
+		);
 	}
 }
 

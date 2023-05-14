@@ -73,7 +73,29 @@ input, .btn {
     transition-duration: .2s !important;
 }
 
+#channelCardContainer {
+    /* display: flex; */
+}
+
 .form-title {
     font-weight: bold;
     font-size: 1.5rem;
 }
+
+.card {
+    margin: 0.5rem !important;
+    display: inline-block !important;
+    transition-duration: .2s !important;
+}
+
+.card:hover {
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, .205) !important;
+}
+
+.channel-button {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    margin-right: 0rem !important;
+    margin-left: 0.5rem !important;
+}
+

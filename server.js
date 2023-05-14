@@ -1,10 +1,11 @@
+require("dotenv").config();
 const cors = require("cors");
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 
 const PORT = 9000;
-const REPL_LINK = "https://bs--datamandoug.repl.co/";
+const REPL_LINK = process.env.REPL_LINK;
 const ALLOWED_SYMBOLS = ["_"];
 
 const app = express();
@@ -26,7 +27,7 @@ async function doDBAction(action, method) {
 		})
 		.then(async (data) => {
 			const actualData = await data;
-			console.log(typeof actualData);
+			// console.log(typeof actualData);
 			return actualData;
 		})
 		.catch((err) => console.log("fetch err: " + err));
@@ -47,7 +48,7 @@ function generateUserId() {
 
 async function isUsernameTaken(username) {
 	const accounts = await doDBAction("list");
-	console.log(accounts);
+	// console.log(accounts);
 
 	for (let i = 0; i < accounts.length; i++) {
 		const accountName = accounts[i];
@@ -57,7 +58,26 @@ async function isUsernameTaken(username) {
 		const thisUsername = account.username;
 		console.log(thisUsername);
 		if (thisUsername === username) {
-			return true;
+			return account;
+		}
+	}
+
+	return false;
+}
+
+async function isAccount(username, password) {
+	const accounts = await doDBAction("list");
+
+	for (let i = 0; i < accounts.length; i++) {
+		const accountKey = accounts[i];
+		let account = await doDBAction("get/" + accountKey);
+		account = JSON.parse(account);
+
+		const thisUsername = account.username;
+		const thisPassword = account.password;
+
+		if (thisUsername === username && thisPassword === password) {
+			return account;
 		}
 	}
 
@@ -98,6 +118,8 @@ async function validateSignup(username, password) {
 io.on("connection", (socket) => {
 	console.log("new connection!");
 
+	socket.emit("checkLoginLocalstorage");
+
 	socket.on("isChannelValid", (channelId) => {
 		const channel = doDBAction("get/c_" + channelId);
 		if (channel) {
@@ -134,7 +156,7 @@ io.on("connection", (socket) => {
 
 				console.log(result);
 
-				socket.emit("signupSuccesful", userData);
+				socket.emit("loginSuccess", userData);
 			})
 			.catch(async (why) => {
 				console.log(why);
@@ -143,6 +165,33 @@ io.on("connection", (socket) => {
 					err: true,
 				});
 			});
+	});
+
+	socket.on("login", async (data) => {
+		const username = data.username;
+		const password = data.password;
+
+		const account = await isAccount(username, password);
+
+		// console.log(account);
+
+		if (account) {
+			socket.emit("credStatus", {
+				status: "login succesful. you may close this modal",
+				err: false,
+			});
+
+			socket.emit("loginSuccess", account);
+		} else {
+			socket.emit("credStatus", {
+				status: "invalid username or password",
+				err: true,
+			});
+		}
+	});
+
+	socket.on("logout", () => {
+		socket.emit("logoutSuccess");
 	});
 });
 
