@@ -115,15 +115,18 @@ async function validateSignup(username, password) {
 	});
 }
 
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
 	console.log("new connection!");
 
 	socket.emit("checkLoginLocalstorage");
 
-	socket.on("isChannelValid", (channelId) => {
-		const channel = doDBAction("get/c_" + channelId);
+	socket.on("isChannelValid", async (channelId) => {
+		const channel = await doDBAction("get/c_" + channelId);
+
 		if (channel) {
 			socket.emit("channelValidSuccess", channel);
+		} else {
+			socket.emit("channelValidFail");
 		}
 	});
 
@@ -167,7 +170,7 @@ io.on("connection", (socket) => {
 			});
 	});
 
-	socket.on("login", async (data) => {
+	socket.on("login", async (data, auto) => {
 		const username = data.username;
 		const password = data.password;
 
@@ -176,17 +179,21 @@ io.on("connection", (socket) => {
 		// console.log(account);
 
 		if (account) {
-			socket.emit("credStatus", {
-				status: "login succesful. you may close this modal",
-				err: false,
-			});
+			if (!auto) {
+				socket.emit("credStatus", {
+					status: "login succesful. you may close this modal",
+					err: false,
+				});
+			}
 
 			socket.emit("loginSuccess", account);
 		} else {
-			socket.emit("credStatus", {
-				status: "invalid username or password",
-				err: true,
-			});
+			if (!auto) {
+				socket.emit("credStatus", {
+					status: "invalid username or password",
+					err: true,
+				});
+			}
 		}
 	});
 

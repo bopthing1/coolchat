@@ -10,12 +10,7 @@ export default function ChannelCard(props) {
 	}
 
 	return (
-		<Card
-			style={{ width: "18rem" }}
-			// onMouseEnter={() => shadowShit(1)}
-			// onMouseLeave={() => shadowShit(2)}
-			// className={shadow ? "shadow-p-3" : "message"}
-		>
+		<Card style={{ width: "18rem" }}>
 			<Card.Body>
 				<Card.Title>{props.title || "placeholder"}</Card.Title>
 				<Card.Text>{props.content || "content here"}</Card.Text>

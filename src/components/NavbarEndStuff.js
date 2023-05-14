@@ -26,7 +26,10 @@ function NavbarEndStuff(props) {
 		<>
 			<CredModal
 				visible={signupOpen}
-				onCloseClicked={() => setSignupOpen(!signupOpen)}
+				onCloseClicked={() => {
+					setSignupOpen(!signupOpen);
+					console.log("onCloseClicked ran!");
+				}}
 				type="signup"
 			></CredModal>
 

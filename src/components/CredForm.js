@@ -73,7 +73,10 @@ export default function CredForm(props) {
 				</Button>
 				<Button
 					variant="secondary"
-					onClick={() => props.onCloseClicked()}
+					onClick={() => {
+						// console.log(typeof props.onClosedClicked || "NULL");
+						props.onCloseClicked();
+					}}
 					disabled={buttonsDisabled}
 				>
 					close

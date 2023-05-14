@@ -14,9 +14,9 @@ export default function ChannelCardContainer(props) {
 			{/* {channels.map((channel) => {
 				const joinedChannels = socket.emit("getJoinedChannels");
 			})} */}
-			{[1, 2, 3, 4, 5].map((e) => {
+			{/* {[1, 2, 3, 4, 5].map((e) => {
 				return <ChannelCard></ChannelCard>;
-			})}
+			})} */}
 		</div>
 	);
 }

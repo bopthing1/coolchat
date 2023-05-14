@@ -11,7 +11,7 @@ export default function BasicModal(props) {
 			<ModalHeader title={props.title}></ModalHeader>
 			<Modal.Body>{props.text}</Modal.Body>
 			<BasicModalFooter
-				onCloseClicked={props.onCloseClicked}
+				onCloseClicked={() => props.onCloseClicked()}
 			></BasicModalFooter>
 		</Modal>
 	);

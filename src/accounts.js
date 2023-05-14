@@ -16,7 +16,7 @@ export default function init() {
 		const username = infoModule.getValue("loginUsername");
 		const password = infoModule.getValue("loginPassword");
 
-		console.log(username, password);
+		console.log(username, password, true);
 
 		socket.emit("login", {
 			username: username,

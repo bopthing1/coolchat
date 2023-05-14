@@ -1,40 +1,19 @@
-import socket from "./socket";
+import { Route, Routes } from "react-router-dom";
+import Channel from "./pages/Channel";
+import Home from "./pages/Home";
 import init from "./accounts";
+import ErrorPage from "./pages/ErrorPage";
 
-import "./App.css";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
-
-import CCNavbar from "./components/CCNavbar";
-import React, { ReactDOM } from "react";
-import MessagesContainer from "./components/MessagesContainer";
-import Chatbox from "./components/Chatbox";
-import ChannelCardContainer from "./components/ChannelCardContainer";
-import ChannelCard from "./components/ChannelCard";
-import ChannelButtons from "./components/ChannelButtons";
-
-const pathName = document.location.pathname;
-
-function App(props) {
+function App() {
 	init();
 
-	if (props.mode === "home") {
-		return (
-			<div className="App">
-				<CCNavbar />
-				<ChannelButtons></ChannelButtons>
-				<ChannelCardContainer></ChannelCardContainer>
-			</div>
-		);
-	} else if (props.mode === "channel") {
-		return (
-			<div className="App" channelId={props.channelId}>
-				<CCNavbar></CCNavbar>
-				<MessagesContainer></MessagesContainer>
-				<Chatbox></Chatbox>
-			</div>
-		);
-	}
+	return (
+		<Routes>
+			<Route path="/" element={<Home />} />
+			<Route path="/channel/:id/" element={<Channel />} />
+			<Route path="/error" element={<ErrorPage />} />
+		</Routes>
+	);
 }
 
 export default App;

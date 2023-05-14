@@ -13,12 +13,5 @@ export default function MessagesContainer(props) {
 		setMessages(data.messages);
 	});
 
-	return (
-		<div id="messages">
-			{messages.map((message, i) => {
-				// console.log(i);
-				return <Message key={i} content={message}></Message>;
-			})}
-		</div>
-	);
+	return <div id="messages">{}</div>;
 }
