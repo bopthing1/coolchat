@@ -65,10 +65,15 @@ p {
     border: 0 !important;
 }
 
-.form-control:hover {
+#chatboxDiv .form-control:hover {
     filter: brightness(1.2);
 }
 
 input, .btn {
     transition-duration: .2s !important;
+}
+
+.form-title {
+    font-weight: bold;
+    font-size: 1.5rem;
 }
