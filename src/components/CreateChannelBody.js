@@ -22,10 +22,23 @@ export default function CredBody(props) {
 			socket.emit("newChannel", {
 				title: title,
 				description: description,
-				accountId: localStorage.getItem("accountId"),
+				owner: localStorage.getItem("accountId"),
 			});
 		}
 	}
+
+
+	socket.on("channelStatus", (data) => {
+		// console.log(data);
+		// console.log(data.err ? "rgb(255, 0, )" : "rgb(0, 255, 0)");
+		setStatusMsg(data.status.toString());
+		setStatusMsgDisplay("block");
+		setStatusMsgColor(data.err ? "rgb(255, 0, 0)" : "rgb(0, 255, 0)");
+
+		setButtonsDisabled(false);
+	});
+
+	
 
 	return (
 		<Modal.Body>

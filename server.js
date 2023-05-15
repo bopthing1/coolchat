@@ -47,12 +47,12 @@ function generateUserId() {
 }
 
 async function isUsernameTaken(username) {
-	const accounts = await doDBAction("list");
+	const accounts = await doDBAction("list/U_");
 	// console.log(accounts);
 
 	for (let i = 0; i < accounts.length; i++) {
 		const accountName = accounts[i];
-		let account = await doDBAction("get/" + accountName);
+		let account = await doDBAction("get/" + accountName );
 		account = JSON.parse(account);
 
 		const thisUsername = account.username;
@@ -66,7 +66,8 @@ async function isUsernameTaken(username) {
 }
 
 async function isAccount(username, password) {
-	const accounts = await doDBAction("list");
+	const accounts = await doDBAction("list/U_");
+	console.log(accounts);
 
 	for (let i = 0; i < accounts.length; i++) {
 		const accountKey = accounts[i];
@@ -76,12 +77,27 @@ async function isAccount(username, password) {
 		const thisUsername = account.username;
 		const thisPassword = account.password;
 
+		// console.log(accountKey);
+		// console.log(thisUsername, thisPassword);
 		if (thisUsername === username && thisPassword === password) {
+			
 			return account;
 		}
 	}
 
 	return false;
+}
+
+async function addChannelToPersonChannelList(channelId, accountId) {
+	let channel = await doDBAction("get/C_" + channelId);
+	channel = JSON.parse(channel);
+	let account = await doDBAction("get/U_" + accountId);
+	account = JSON.parse(account);
+
+	console.log(channel);
+
+	account["channelsJoined"].push(channelId);
+	channel["members"].push(channelId)
 }
 
 async function validateSignup(username, password) {
@@ -92,6 +108,10 @@ async function validateSignup(username, password) {
 
 		if (username.length > 20) {
 			reject("your username must be 20 characters or under");
+		}
+
+		if (username.length < 3) {
+			reject("your username must be at least 3 characters");
 		}
 
 		if ((await isUsernameTaken(username)) === true) {
@@ -115,13 +135,61 @@ async function validateSignup(username, password) {
 	});
 }
 
+async function validateChannel(title, owner) {
+	return new Promise(async (resolve, reject) => {
+		if (!title || !owner) {
+			reject("title and owner must not be undefined");
+		}
+
+		if (title.length > 100) {
+			reject("title must be less than 100 chars");
+		}
+
+		return resolve("your channel has been succefully created. you may close this modal and enter your channel");
+	});
+}
+
+async function getChannels() {
+	let result = [];
+	const channels = await doDBAction("list/C_");
+	console.log("channels: " + channels);
+
+	for (let i = 0; i < channels.length; i++) {
+		const channelKey = channels[i];
+		let channel = await doDBAction("get/" + channelKey);
+		// channel = JSON.parse(channel);
+
+		result.push(channel);
+	}
+
+	return result;
+}
+
+async function updateMyChannels(socket, accountId) {
+	
+	const channels = await getChannels();
+	let myChannels = [];
+
+	channels.forEach(channel => {
+		console.log("channel: " + channel || "NULL");
+		const members = channel.members;
+		
+
+		if (members[accountId]) {
+			myChannels.push(channel.channelId);
+		}
+	});
+
+	socket.emit("updateMyChannels", myChannels);
+}
+
 io.on("connection", async (socket) => {
 	console.log("new connection!");
 
 	socket.emit("checkLoginLocalstorage");
 
 	socket.on("isChannelValid", async (channelId) => {
-		const channel = await doDBAction("get/c_" + channelId);
+		const channel = await doDBAction("get/C_" + channelId);
 
 		if (channel) {
 			socket.emit("channelValidSuccess", channel);
@@ -176,7 +244,7 @@ io.on("connection", async (socket) => {
 
 		const account = await isAccount(username, password);
 
-		// console.log(account);
+		console.log(account);
 
 		if (account) {
 			if (!auto) {
@@ -186,7 +254,11 @@ io.on("connection", async (socket) => {
 				});
 			}
 
+			console.log(account);
+
 			socket.emit("loginSuccess", account);
+			// await updateMyChannels(socket, account.accountId);
+			
 		} else {
 			if (!auto) {
 				socket.emit("credStatus", {
@@ -201,7 +273,46 @@ io.on("connection", async (socket) => {
 		socket.emit("logoutSuccess");
 	});
 
-	
+	socket.on("newChannel", async (data) => {
+		const title = data.title;
+		const description = data.title;
+		const owner = data.owner;
+		const private = data.private;
+
+		console.log("new channel");
+
+		await validateChannel(title, owner)
+			.then(async (message) => {
+				socket.emit("channelStatus", {
+					status: message,
+					err: false,
+				});
+
+				socket.emit("channelSuccess");
+
+				const channelData = {
+					title: title,
+					description: description,
+					owner: owner,
+					members: [],
+					allowedPeople: [],
+					private: private,
+					channelId: generateUserId()
+				};
+
+				const channel = await doDBAction(`set/C_${channelData.channelId}/${JSON.stringify(channelData)}`, "POST")
+
+				await addChannelToPersonChannelList(channelData.channelId, owner);
+
+				await updateMyChannels(socket, owner);
+			}).catch(async (err) => {
+				console.log(err);
+				socket.emit("channelStatus", {
+					status: err,
+					err: true
+				})
+			});
+	});
 });
 
 server.listen(PORT, () => console.log("listening on port " + PORT));

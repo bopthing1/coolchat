@@ -15,9 +15,9 @@ infoModule.removeValue = (key) => {
 
 infoModule.isLoggedIn = () => {
 	return (
-		localStorage.getItem("username") &&
-		localStorage.getItem("password") &&
-		localStorage.getItem("accountId")
+		localStorage.getItem("username") != "" &&
+		localStorage.getItem("password") != "" &&
+		localStorage.getItem("accountId") != ""
 	);
 };
 
