@@ -200,6 +200,8 @@ io.on("connection", async (socket) => {
 	socket.on("logout", () => {
 		socket.emit("logoutSuccess");
 	});
+
+	
 });
 
 server.listen(PORT, () => console.log("listening on port " + PORT));

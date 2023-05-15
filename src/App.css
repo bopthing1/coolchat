@@ -24,7 +24,7 @@ body {
 
 }
 
-p {
+p, h1 {
     color: white;
 }
 
@@ -97,5 +97,9 @@ input, .btn {
     margin-bottom: 0.5rem;
     margin-right: 0rem !important;
     margin-left: 0.5rem !important;
+}
+
+.error-h1 {
+    text-align: center !important;
 }
 

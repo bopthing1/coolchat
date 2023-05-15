@@ -23,7 +23,7 @@ function Channel(props) {
 	});
 
 	socket.on("channelValidFail", () => {
-		window.location.replace("/");
+		window.location.replace("/error/invalid-channel");
 	});
 
 	return (
