@@ -9,7 +9,8 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import CCNavbar from "../components/CCNavbar";
 import React, { ReactDOM } from "react";
 import ChannelCardContainer from "../components/ChannelCardContainer";
-import ChannelButtons from "../components/ChannelButtons";
+import LoadingScreen from "../components/LoadingScreen";
+// import ChannelButtons from "../components/ChannelButtons";
 
 const pathName = document.location.pathname;
 
@@ -19,14 +20,11 @@ function Home(props) {
 	return (
 		<>
 			<div className="Home">
-				<CCNavbar />
-				<ChannelButtons></ChannelButtons>
-				<ChannelCardContainer></ChannelCardContainer>
+				<CCNavbar home/>
+				<ChannelCardContainer />
 			</div>
 
-			<div id="detail">
-				<Outlet />
-			</div>
+			<LoadingScreen></LoadingScreen>
 		</>
 	);
 }

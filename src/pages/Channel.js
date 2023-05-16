@@ -13,10 +13,13 @@ import Chatbox from "../components/Chatbox";
 import ErrorPage from "./ErrorPage";
 
 function Channel(props) {
+	init();
+
 	const { id } = useParams();
 	const [visible, setVisible] = useState(false);
 
 	socket.emit("isChannelValid", id);
+	socket.emit("hasPermsForChannel", localStorage.getItem("accountId"), id);
 
 	socket.on("channelValidSuccess", (channel) => {
 		setVisible(true);
@@ -25,6 +28,11 @@ function Channel(props) {
 	socket.on("channelValidFail", () => {
 		window.location.replace("/error/invalid-channel");
 	});
+
+	socket.on("hasPermsForChannelFailed", () => {
+		window.location.replace("/error/invalid-channel");
+	});
+
 
 	return (
 		<div

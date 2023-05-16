@@ -6,7 +6,8 @@ import infoModule from "../appInfo";
 export default function ChannelCardContainer(props) {
 	let [channels, setChannels] = useState([]);
 
-	socket.on("updateChannels", (data) => {
+	socket.on("updateMyChannels", (data) => {
+		console.log(data);
 		setChannels(data);
 	});
 
@@ -15,9 +16,9 @@ export default function ChannelCardContainer(props) {
 			id="channelCardContainer"
 			style={{ display: infoModule.isLoggedIn() ? "inline" : "none" }}
 		>
-			{/* {channels.map((channel) => {
-				const joinedChannels = socket.emit("getJoinedChannels");
-			})} */}
+			{channels.map((channel) => {
+				return <ChannelCard title={channel.title} description={channel.description} channelId={channel.channelId}></ChannelCard>
+			})}
 			{/* {[1, 2, 3, 4, 5].map((e) => {
 				return <ChannelCard></ChannelCard>;
 			})} */}

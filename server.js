@@ -56,7 +56,7 @@ async function isUsernameTaken(username) {
 		account = JSON.parse(account);
 
 		const thisUsername = account.username;
-		console.log(thisUsername);
+		// console.log(thisUsername);
 		if (thisUsername === username) {
 			return account;
 		}
@@ -67,7 +67,7 @@ async function isUsernameTaken(username) {
 
 async function isAccount(username, password) {
 	const accounts = await doDBAction("list/U_");
-	console.log(accounts);
+	// console.log(accounts);
 
 	for (let i = 0; i < accounts.length; i++) {
 		const accountKey = accounts[i];
@@ -94,10 +94,17 @@ async function addChannelToPersonChannelList(channelId, accountId) {
 	let account = await doDBAction("get/U_" + accountId);
 	account = JSON.parse(account);
 
-	console.log(channel);
+	// console.log(typeof channel);
 
-	account["channelsJoined"].push(channelId);
-	channel["members"].push(channelId)
+	// console.log(channel.title + " is now on " + accountId + "'s channelList");
+
+	account.channelsJoined.push(channelId);
+	channel.members.push(accountId)
+
+	await doDBAction("set/C_" + channel.channelId + "/" + JSON.stringify(channel), "POST");
+
+	// const channelRes = await doDBAction("get/C_" + channelId);
+	// console.log("channelRes: " + channelRes);
 }
 
 async function validateSignup(username, password) {
@@ -152,7 +159,7 @@ async function validateChannel(title, owner) {
 async function getChannels() {
 	let result = [];
 	const channels = await doDBAction("list/C_");
-	console.log("channels: " + channels);
+	// console.log("channels: " + channels);
 
 	for (let i = 0; i < channels.length; i++) {
 		const channelKey = channels[i];
@@ -166,18 +173,22 @@ async function getChannels() {
 }
 
 async function updateMyChannels(socket, accountId) {
-	
+	accountId = parseInt(accountId);
 	const channels = await getChannels();
 	let myChannels = [];
 
 	channels.forEach(channel => {
-		console.log("channel: " + channel || "NULL");
+		channel = JSON.parse(channel);
 		const members = channel.members;
-		
+		// console.log(typeof members[0], typeof accountId, members[parseInt(accountId)] || "NO");
 
-		if (members[accountId]) {
-			myChannels.push(channel.channelId);
-		}
+		members.forEach(member => {
+			member = parseInt(member);
+			if (parseInt(member) === accountId) {
+				// console.log(channel + " is in " + accountId + "'s thingy")
+				myChannels.push(channel);
+			}
+		});
 	});
 
 	socket.emit("updateMyChannels", myChannels);
@@ -225,7 +236,7 @@ io.on("connection", async (socket) => {
 					"POST"
 				);
 
-				console.log(result);
+				// console.log(result);
 
 				socket.emit("loginSuccess", userData);
 			})
@@ -244,7 +255,7 @@ io.on("connection", async (socket) => {
 
 		const account = await isAccount(username, password);
 
-		console.log(account);
+		console.log("logging in...");
 
 		if (account) {
 			if (!auto) {
@@ -257,7 +268,7 @@ io.on("connection", async (socket) => {
 			console.log(account);
 
 			socket.emit("loginSuccess", account);
-			// await updateMyChannels(socket, account.accountId);
+			await updateMyChannels(socket, account.accountId);
 			
 		} else {
 			if (!auto) {
@@ -300,7 +311,7 @@ io.on("connection", async (socket) => {
 					channelId: generateUserId()
 				};
 
-				const channel = await doDBAction(`set/C_${channelData.channelId}/${JSON.stringify(channelData)}`, "POST")
+				await doDBAction(`set/C_${channelData.channelId}/${JSON.stringify(channelData)}`, "POST")
 
 				await addChannelToPersonChannelList(channelData.channelId, owner);
 
@@ -312,6 +323,26 @@ io.on("connection", async (socket) => {
 					err: true
 				})
 			});
+	});
+
+	socket.on("hasPermsForChannel", async (accountId, channelId) => {
+		channelId = parseInt(channelId);
+		accountId = parseInt(accountId);
+		const channel = await doDBAction("get/C_" + channelId);
+		
+		if (channel) {
+			const members = channel.members;
+
+			members.forEach(member => {
+				member = parseInt(member);
+
+				if (member === accountId) {
+					socket.emit("hasPermsForChannelSuccess", channel);
+				}
+			});
+
+			socket.emit("hasPermsForChannelFailed", channel);
+		}
 	});
 });
 

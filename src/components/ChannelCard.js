@@ -2,19 +2,16 @@ import { useState } from "react";
 import { Card, Button } from "react-bootstrap";
 
 export default function ChannelCard(props) {
-	const [shadow, setShadow] = useState(false);
-
-	function shadowShit(mode) {
-		console.log(mode);
-		setShadow(mode ? true : false);
+	function onClick() {
+		window.location.replace("/channel/" + props.channelId + "/");
 	}
 
 	return (
 		<Card style={{ width: "18rem" }}>
 			<Card.Body>
 				<Card.Title>{props.title || "placeholder"}</Card.Title>
-				<Card.Text>{props.content || "content here"}</Card.Text>
-				<Button variant="primary">open channel</Button>
+				<Card.Text>{props.description || "content here"}</Card.Text>
+				<Button variant="primary" onClick={() => onClick()}>open channel</Button>
 			</Card.Body>
 		</Card>
 	);

@@ -12,6 +12,7 @@ function App() {
 			<Route path="/" element={<Home />} />
 			<Route path="/channel/:id/" element={<Channel />} />
 			<Route path="/error/:err/" element={<ErrorPage />} />
+			<Route path="*" element={<ErrorPage />} />
 		</Routes>
 	);
 }

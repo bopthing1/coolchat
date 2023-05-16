@@ -101,5 +101,17 @@ input, .btn {
 
 .error-h1 {
     text-align: center !important;
+    font-size: 400%;
+    margin: 20%;
+    position: static;
 }
 
+.card-body .card-text {
+    color: black;
+}
+
+.card-title, .card-text {
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+}
