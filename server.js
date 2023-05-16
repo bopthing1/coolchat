@@ -265,7 +265,7 @@ io.on("connection", async (socket) => {
 				});
 			}
 
-			console.log(account);
+			// console.log(account);
 
 			socket.emit("loginSuccess", account);
 			await updateMyChannels(socket, account.accountId);
@@ -307,6 +307,7 @@ io.on("connection", async (socket) => {
 					owner: owner,
 					members: [],
 					allowedPeople: [],
+					messages: [],
 					private: private,
 					channelId: generateUserId()
 				};
@@ -328,20 +329,31 @@ io.on("connection", async (socket) => {
 	socket.on("hasPermsForChannel", async (accountId, channelId) => {
 		channelId = parseInt(channelId);
 		accountId = parseInt(accountId);
-		const channel = await doDBAction("get/C_" + channelId);
+		let channel = await doDBAction("get/C_" + channelId);
+		channel = JSON.parse(channel);
 		
 		if (channel) {
 			const members = channel.members;
+			// console.log(channel);
+
+			let success = false;
 
 			members.forEach(member => {
 				member = parseInt(member);
+				// console.log(members, typeof member, typeof accountId)
 
 				if (member === accountId) {
+					console.log("yay! member is accountId")
 					socket.emit("hasPermsForChannelSuccess", channel);
+					success = true;
 				}
 			});
 
-			socket.emit("hasPermsForChannelFailed", channel);
+			if (!success) {
+				socket.emit("hasPermsForChannelFailed", channel);
+			}
+
+			
 		}
 	});
 });

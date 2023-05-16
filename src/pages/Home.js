@@ -7,7 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 import CCNavbar from "../components/CCNavbar";
-import React, { ReactDOM } from "react";
+import React, { useState } from "react";
 import ChannelCardContainer from "../components/ChannelCardContainer";
 import LoadingScreen from "../components/LoadingScreen";
 // import ChannelButtons from "../components/ChannelButtons";
@@ -15,16 +15,22 @@ import LoadingScreen from "../components/LoadingScreen";
 const pathName = document.location.pathname;
 
 function Home(props) {
+	const [visible, setVisible] = useState(true);
+
 	init();
+
+	socket.on("updateMyChannels", () => {
+		setVisible(false);
+	});
 
 	return (
 		<>
 			<div className="Home">
-				<CCNavbar home/>
+				<CCNavbar home />
 				<ChannelCardContainer />
 			</div>
 
-			<LoadingScreen></LoadingScreen>
+			<LoadingScreen visible={visible}></LoadingScreen>
 		</>
 	);
 }

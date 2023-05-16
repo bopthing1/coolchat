@@ -1,12 +1,10 @@
 import { useState } from "react"
 import socket from "../socket"
 
-export default function LoadingScreen() {
-    const [visible, setVisible] = useState(true);
+export default function LoadingScreen(props) {
+    const visible = props.visible;
 
-    socket.on("updateMyChannels", () => {
-        setVisible(false);
-    });
+    
 
     return <>
         <div style={{display: visible ? "block" : "none"}}>

@@ -1,18 +1,29 @@
+import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 
 export default function Chatbox(props) {
-	function onSubmit(e) {}
+  const [messageValue, setMessageValue] = useState("");
 
-	return (
-		<div id="chatboxDiv" className="bg-dark">
-			<Form onSubmit={onSubmit}>
-				<Form.Control
-					required={true}
-					maxLength={200}
-					placeholder="type anything here"
-					id="chatbox"
-				></Form.Control>
-			</Form>
-		</div>
-	);
+  function onSubmit(e) {
+    e.preventDefault();
+
+    setMessageValue("");
+  }
+
+  return (
+    <div id="chatboxDiv" className="bg-dark">
+      <Form onSubmit={onSubmit}>
+        <Form.Control
+          required={true}
+          autoComplete="false"
+          autoCapitalize="false"
+          maxLength={200}
+          value={messageValue}
+          onChange={(e) => setMessageValue(e.target.value)}
+          placeholder="type anything here"
+          id="chatbox"         className=""
+        ></Form.Control>
+      </Form>
+    </div>
+  );
 }
