@@ -49,8 +49,8 @@ function Channel(props) {
 				style={{ display: visible ? "block" : "none" }}
 			>
 				<CCNavbar></CCNavbar>
-				<MessagesContainer></MessagesContainer>
-				<Chatbox></Chatbox>
+				<MessagesContainer channel={id}></MessagesContainer>
+				<Chatbox channel={id}></Chatbox>
 				<p>{id || "NULL"}</p>
 			</div>
 		</>

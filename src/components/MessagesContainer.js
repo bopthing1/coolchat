@@ -10,8 +10,19 @@ export default function MessagesContainer(props) {
 	});
 
 	socket.on("updateMessages", (data) => {
-		setMessages(data.messages);
+		const channel = data.channel;
+		const messages = data.messages;
+
+		if (channel === props.currentChannel) {
+			setMessages(messages);
+		}
 	});
 
-	return <div id="messages">{}</div>;
+	return (
+		<div id="messages">
+			{messages.forEach((m) => {
+				return <Message content={m.content} author={m.author} />;
+			})}
+		</div>
+	);
 }

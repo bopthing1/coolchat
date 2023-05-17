@@ -5,8 +5,6 @@ import init from "./accounts";
 import ErrorPage from "./pages/ErrorPage";
 
 function App() {
-	init();
-
 	return (
 		<Routes>
 			<Route path="/" element={<Home />} />

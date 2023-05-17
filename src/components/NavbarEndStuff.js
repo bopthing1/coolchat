@@ -13,13 +13,15 @@ function NavbarEndStuff(props) {
 
 	let [accountName, setAccountName] = useState("");
 
-	socket.on("loginSuccess", (account) => {
-		setAccountName(account.username);
-		console.log(account.username);
-	});
+	useEffect(() => {
+		socket.on("loginSuccess", (account) => {
+			setAccountName(account.username);
+			console.log(account.username);
+		});
 
-	socket.on("logoutSuccess", () => {
-		setAccountName("");
+		socket.on("logoutSuccess", () => {
+			setAccountName("");
+		});
 	});
 
 	return (
