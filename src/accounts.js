@@ -14,22 +14,22 @@ function logoutClient() {
 }
 
 export default function init() {
-	socket.on("checkLoginLocalstorage", () => {
-		if (infoModule.isLoggedIn()) {
-			const username = infoModule.getValue("loginUsername");
-			const password = infoModule.getValue("loginPassword");
+	// socket.on("checkLoginLocalstorage", () => {
+	// 	if (infoModule.isLoggedIn()) {
+	// 		const username = infoModule.getValue("loginUsername");
+	// 		const password = infoModule.getValue("loginPassword");
 
-			// console.log(username, password, true);
+	// 		// console.log(username, password, true);
 
-			socket.emit("login", {
-				username: username,
-				password: password,
-			});
-		}
-	});
+	// 		socket.emit("login", {
+	// 			username: username,
+	// 			password: password,
+	// 		});
+	// 	}
+	// });
 
-	socket.on("loginSuccess", (account) => {
-		loginClient(account);
+	socket.on("loginSuccess", (account, accessToken) => {
+		console.log(accessToken);
 	});
 
 	socket.on("logoutSuccess", () => {

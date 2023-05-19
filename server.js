@@ -6,6 +6,7 @@ const cors = require("cors");
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
+const jwt = require("jsonwebtoken");
 
 const PORT = 9000;
 const REPL_LINK = process.env.REPL_LINK;
@@ -17,32 +18,81 @@ const server = http.createServer(app);
 const bcrypt = require("bcrypt");
 
 app.use(cors());
+app.use(express.json());
 
-async function doDBAction(action, method) {
-	let dataRes;
-	dataRes = await fetch(REPL_LINK + action, {
-		method: method || "GET",
-	})
-		.then(async (resp) => {
-			try {
-				return await resp.json();
-			} catch (err) {
-				return await resp;
-			}
-		})
-		.then(async (data) => {
-			const actualData = await data;
-			// console.log(typeof actualData);
-			return actualData;
-		})
-		.catch((err) => console.log("fetch err: " + err));
+const dbSocket = io(REPL_LINK);
 
-	if (typeof dataRes === "string") {
-		dataRes = JSON.stringify(dataRes);
+async function getAccounts() {
+	let result = [];
+	const accounts = await doDBAction("list", { prefix: "U_" });
+	// console.log(accounts);
+
+	for (let i = 0; i < accounts.length; i++) {
+		const accountKey = accounts[i];
+		const account = await doDBAction("get", { key: accountKey });
+
+		result.push(account);
 	}
 
-	return dataRes;
+	return result;
 }
+
+async function doDBAction(action, data) {
+	const id = Math.random() * 1000000000;
+
+	return new Promise(async (resolve) => {
+		switch (action) {
+			case "get":
+				dbSocket.emit("get", data.key, data.password || false);
+				break;
+			case "list":
+				dbSocket.emit("list", data.prefix || null);
+				break;
+			case "set":
+				// console.log(value);
+
+				dbSocket.emit("set", data.key, data.value);
+				break;
+			case "delete":
+				dbSocket.emit("delete", data.key);
+				break;
+		}
+
+		dbSocket.on(action + "Result", (result) => {
+			// console.log("DONE! 1 " + id);
+			// console.log(action + "result: " + result + "\nid: " + id);
+			return resolve(result);
+		});
+	});
+}
+
+// -- the async function below this was to test my database system
+
+// (async () => {
+// 	const random = Math.round(Math.random() * 1000000);
+
+// 	await doDBAction("set", {
+// 		key: "TROOM" + random,
+// 		value: JSON.stringify({ a: 1, b: 2, c: 3 }),
+// 	});
+
+// 	const result = await doDBAction("get", {
+// 		key: "TROOM" + random,
+// 	});
+
+// 	const list = await doDBAction("list", {});
+
+// 	console.log(list);
+
+// 	for (let i = 0; i < list.length; i++) {
+// 		const e = list[i];
+// 		const er = await doDBAction("get", { key: e, password: JSON.stringify({ a: 1, b: 2, c: 3 }) });
+
+// 		console.log(e, er);
+// 	}
+
+// 	// console.log(result);
+// })();
 
 const serverIo = new Server(server, {
 	cors: {
@@ -51,27 +101,27 @@ const serverIo = new Server(server, {
 	},
 });
 
-const dbSocket = io(REPL_LINK);
-
-dbSocket.emit("yessir");
-
 function generateUserId() {
 	return Math.floor(100000000 + Math.random() * 900000000);
 }
 
 async function isUsernameTaken(username) {
-	const accounts = await doDBAction("list/U_");
-	// console.log(accounts);
+	const accounts = await getAccounts();
 
 	for (let i = 0; i < accounts.length; i++) {
-		const accountName = accounts[i];
-		let account = await doDBAction("get/" + accountName);
-		account = JSON.parse(account);
-
+		const account = accounts[i];
+		console.log(account);
 		const thisUsername = account.username;
-		// console.log(thisUsername);
+		console.log(
+			typeof thisUsername,
+			typeof username,
+			thisUsername,
+			username,
+			thisUsername === username
+		);
+
 		if (thisUsername === username) {
-			return account;
+			return true;
 		}
 	}
 
@@ -79,12 +129,12 @@ async function isUsernameTaken(username) {
 }
 
 async function isAccount(username, password) {
-	const accounts = await doDBAction("list/U_");
+	const accounts = await doDBAction("list", { prefix: "U_" });
 	// console.log(accounts);
 
 	for (let i = 0; i < accounts.length; i++) {
 		const accountKey = accounts[i];
-		let account = await doDBAction("get/" + accountKey);
+		let account = await doDBAction("get", { key: "U_" + accountKey });
 		account = JSON.parse(account);
 
 		const thisUsername = account.username;
@@ -101,10 +151,8 @@ async function isAccount(username, password) {
 }
 
 async function addChannelToPersonChannelList(channelId, accountId) {
-	let channel = await doDBAction("get/C_" + channelId);
-	channel = JSON.parse(channel);
-	let account = await doDBAction("get/U_" + accountId);
-	account = JSON.parse(account);
+	let channel = await doDBAction("get", { key: "C_" + channelId });
+	let account = await doDBAction("get", { key: "U_" + accountId });
 
 	// console.log(typeof channel);
 
@@ -173,14 +221,35 @@ async function validateChannel(title, owner) {
 	});
 }
 
+async function login(username, password) {
+	return new Promise(async (resolve, reject) => {
+		const accounts = await getAccounts();
+
+		accounts.forEach(async (account) => {
+			console.log(account, typeof account);
+			if (account.username === username) {
+				try {
+					if (await bcrypt.compare(password, account.password)) {
+						resolve(account);
+					} else {
+						reject("invalid username or password");
+					}
+				} catch (err) {
+					console.log(err);
+				}
+			}
+		});
+	});
+}
+
 async function getChannels() {
 	let result = [];
-	const channels = await doDBAction("list/C_");
+	const channels = await doDBAction("list", { prefix: "C_" });
 	// console.log("channels: " + channels);
 
 	for (let i = 0; i < channels.length; i++) {
 		const channelKey = channels[i];
-		let channel = await doDBAction("get/" + channelKey);
+		let channel = await doDBAction("get", { key: "C_" + channelKey });
 		// channel = JSON.parse(channel);
 
 		result.push(channel);
@@ -215,7 +284,7 @@ serverIo.on("connection", async (socket) => {
 	console.log("new connection!");
 	socket.emit("checkLoginLocalstorage");
 	socket.on("isChannelValid", async (channelId) => {
-		const channel = await doDBAction("get/C_" + channelId);
+		const channel = await doDBAction("get", { key: "C_" + channelId });
 		if (channel) {
 			socket.emit("channelValidSuccess", channel);
 		} else {
@@ -232,18 +301,22 @@ serverIo.on("connection", async (socket) => {
 					err: false,
 				});
 				console.log(message);
+
+				const salt = await bcrypt.genSalt();
+				const hashedPassword = await bcrypt.hash(password, salt);
+
 				const userData = {
 					username: username,
-					password: password,
+					password: hashedPassword,
 					accountId: generateUserId(),
 					channelsJoined: [],
 				};
 				// const get = await doDBAction("list");
 				// console.log(get);
-				const result = await doDBAction(
-					`set/U_${userData.accountId}/${JSON.stringify(userData)}`,
-					"POST"
-				);
+				const result = await doDBAction("set", {
+					key: "U_" + userData.accountId,
+					value: JSON.stringify(userData),
+				});
 				// console.log(result);
 				socket.emit("loginSuccess", userData);
 			})
@@ -258,7 +331,21 @@ serverIo.on("connection", async (socket) => {
 	socket.on("login", async (data, auto) => {
 		const username = data.username;
 		const password = data.password;
-		const account = await isAccount(username, password);
+		const account = await login(username, password)
+			.then((message) => {
+				socket.emit("credStatus", {
+					status: message,
+					err: false,
+				});
+			})
+			.catch(async (err) => {
+				console.log(err);
+
+				socket.emit("credStatus", {
+					status: err,
+					err: true,
+				});
+			});
 		// console.log("logging in...");
 		if (account) {
 			if (!auto) {
@@ -268,7 +355,10 @@ serverIo.on("connection", async (socket) => {
 				});
 			}
 			// console.log(account);
-			socket.emit("loginSuccess", account);
+
+			const accessToken = jwt.sign(account, process.env.ACCESS_TOKEN_SECRET);
+
+			socket.emit("loginSuccess", account, accessToken);
 			await updateMyChannels(socket, account.accountId);
 		} else {
 			if (!auto) {
